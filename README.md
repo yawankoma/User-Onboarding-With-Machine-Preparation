@@ -38,8 +38,13 @@ Amanda Mensah joined S.K.O Corporation and required a fully configured corporate
 The hardware hash was extracted from the target Windows 11 device using PowerShell and exported as a CSV file:
 
 ```powershell
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+New-Item -Type Directory -Path "C:\HWID"
+Set-Location -Path "C:\HWID"
+$env:Path += ";C:\Program Files\WindowsPowerShell\Scripts"
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 Install-Script -Name Get-WindowsAutopilotInfo
-Get-WindowsAutopilotInfo -OutputFile C:\AutopilotHash.csv
+Get-WindowsAutopilotInfo -OutputFile AutopilotHWID.csv
 ```
 
 The CSV was imported into Intune via:
