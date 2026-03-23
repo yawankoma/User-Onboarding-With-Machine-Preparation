@@ -1,4 +1,4 @@
-# Project — Windows Autopilot: New Hire Device Provisioning
+# Windows Autopilot: New Hire Device Provisioning
 
 ## Business Context
 
