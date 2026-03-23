@@ -47,7 +47,7 @@ Install-Script -Name Get-WindowsAutopilotInfo
 Get-WindowsAutopilotInfo -OutputFile AutopilotHWID.csv
 ```
 
-IMG
+(img/P1.png)
 
 ---
 
