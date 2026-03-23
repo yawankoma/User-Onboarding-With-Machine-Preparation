@@ -153,7 +153,7 @@ Both applications are managed centrally through Intune, allowing the IT Administ
 
 ---
 
-![](img/P6.png)
+![](img/P6X.png)
 
 ---
 
