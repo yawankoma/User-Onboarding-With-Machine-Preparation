@@ -47,11 +47,19 @@ Install-Script -Name Get-WindowsAutopilotInfo
 Get-WindowsAutopilotInfo -OutputFile AutopilotHWID.csv
 ```
 
+IMG
+
+---
+
 The CSV was imported into Intune via:
 
 > Devices → Enrollment → Windows → Windows Autopilot devices → Import
 
 A manual **Sync** was triggered after import to register the device with the Autopilot service.
+
+---
+
+IMG
 
 ---
 
@@ -72,6 +80,10 @@ A deployment profile was created to define the out-of-box experience for the dev
 
 ---
 
+IMG
+
+---
+
 ### Step 3 — Dynamic Device Group
 
 A dynamic Entra ID device group was configured to automatically target Autopilot-registered devices and receive the deployment profile:
@@ -84,6 +96,11 @@ A dynamic Entra ID device group was configured to automatically target Autopilot
 ```
 (device.deviceManufacturer -eq "innotek GmbH")
 ```
+---
+
+IMG
+
+---
 
 > **Note:** In a production environment with physical hardware, the standard Autopilot membership rule `(device.devicePhysicalIds -any _ -eq "[ZTDId]")` would be used. The manufacturer-based rule was applied here as a lab-appropriate alternative, since VirtualBox-hosted devices do not carry a ZTDId attribute prior to completing enrollment.
 
@@ -101,13 +118,84 @@ The profile status updated from **Not assigned** to **Assigned**, confirming the
 
 ---
 
-### Step 5 — Autopilot Provisioning
+IMG
+
+---
+
+### Step 5 — Application Deployment
+
+To ensure Amanda's workstation arrived with the necessary productivity and browsing tools pre-installed, two applications were deployed through Intune before the device completed provisioning:
+
+> Apps → All Apps → Add
+
+**Microsoft 365 Apps for Windows 10 and later**
+
+| Field | Value |
+|---|---|
+| Type | Microsoft 365 Apps (Windows) |
+| Suite | Word, Excel, Outlook, Teams |
+| Assigned | Yes — Windows 11 AP group |
+
+Microsoft 365 was configured as a **Required** app assignment, meaning it installs automatically on any device in the group without user interaction.
+
+**Google Chrome (Enterprise)**
+
+| Field | Value |
+|---|---|
+| Type | Windows MSI line-of-business |
+| Version | 146.0.7680.154 |
+| Package | googlechromestandaloneenterprise64.msi |
+| Assigned | No — pending assignment |
+
+Google Chrome was uploaded as a line-of-business MSI app. Once assigned to the device group, it will deploy silently during or after the Autopilot provisioning process.
+
+Both applications are managed centrally through Intune, allowing the IT Administrator to push updates, monitor install status, and remove apps remotely without touching the device.
+
+---
+
+IMG
+
+---
+
+### Step 6 — OneDrive Configuration Policy
+
+To ensure Amanda could access her files from any corporate device, a configuration profile was created in Intune to automatically configure OneDrive Known Folder Move and silent sign-in:
+
+> Devices → Configuration → Create profile → Windows 10 and later → Settings catalog
+
+**Profile Name:** SKO OneDrive Configuration
+
+The following OneDrive settings were configured:
+
+| Setting | Value |
+|---|---|
+| Silently move Windows known folders to OneDrive | Enabled |
+| Show notification to users after folders have been redirected | No |
+| Tenant ID | SKO12 Tenant ID |
+| Use OneDrive Files On-Demand | Enabled |
+| Silently sign in users to the OneDrive sync app with their Windows credentials | Enabled |
+
+With this policy in place, Amanda's Desktop, Documents, and Pictures folders are automatically backed up and synced to OneDrive. If she signs into any other corporate device, her folders are immediately available without any manual setup.
+
+The profile was assigned to the **Windows 11 AP** dynamic device group, ensuring it applies automatically to all Autopilot-provisioned devices.
+
+---
+
+IMG
+
+---
+
+### Step 7 — Autopilot Provisioning
 
 With the profile assigned, an Autopilot reset was initiated on the device:
 
 > Settings → System → Recovery → Reset this PC → Remove everything → Local reinstall
 
 On reboot, the device contacted the Autopilot service, retrieved the deployment profile, and presented the customised OOBE. Amanda Mensah signed in with her corporate credentials and the device was automatically enrolled into Intune under her account.
+
+---
+
+IMG
 
 ---
 
@@ -128,18 +216,7 @@ Amanda received a fully managed, corporate-ready workstation with Microsoft 365 
 
 ---
 
-## Screenshots
-
-| # | Description |
-|---|---|
-| 01 | Autopilot device list — imported hardware hash |
-| 02 | Deployment profile settings — SKO Autopilot Profile |
-| 03 | Dynamic group membership rule in Entra ID |
-| 04 | Autopilot device list — profile status showing **Assigned** |
-| 05 | Completed desktop — Amanda Mensah logged in with M365 apps |
-| 06 | Intune device record — primary user, compliance, and enrollment details |
-
-> 📸 *Replace placeholder rows with actual screenshots captured during the project.*
+IMG
 
 ---
 
@@ -148,6 +225,9 @@ Amanda received a fully managed, corporate-ready workstation with Microsoft 365 
 - Windows Autopilot device registration via hardware hash import
 - Intune deployment profile creation and assignment
 - Microsoft Entra ID dynamic device group configuration and membership rule authoring
+- Application deployment via Intune — Microsoft 365 Apps and line-of-business MSI packaging
 - Zero-touch, cloud-native device provisioning (no on-premises dependency)
+- OneDrive Known Folder Move configuration via Intune Settings Catalog
+- Automated OneDrive silent sign-in for seamless user experience across devices
 - End-to-end modern endpoint management aligned with Microsoft's cloud-first guidance
 - New hire onboarding automation via Microsoft Intune and Windows Autopilot
