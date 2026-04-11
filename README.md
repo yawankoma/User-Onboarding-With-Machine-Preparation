@@ -225,7 +225,7 @@ Amanda received a fully managed, corporate-ready workstation with Microsoft 365 
 - Windows Autopilot device registration via hardware hash import
 - Intune deployment profile creation and assignment
 - Microsoft Entra ID dynamic device group configuration and membership rule authoring
-- Application deployment via Intune — Microsoft 365 Apps and line-of-business MSI packaging
+- Application deployment via Intune Microsoft 365 Apps and line-of-business MSI packaging
 - Zero-touch, cloud-native device provisioning (no on-premises dependency)
 - OneDrive Known Folder Move configuration via Intune Settings Catalog
 - Automated OneDrive silent sign-in for seamless user experience across devices
